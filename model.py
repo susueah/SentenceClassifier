@@ -17,7 +17,8 @@ def make_embedding(tokenizer, embed_dict):
         if embedding_vector is not None:
             embedding_matrix[i] = embedding_vector
         else:
-            print("Word " + word + " not in vocab")
+            pass
+            # print("Word " + word + " not in vocab")
     return embedding_matrix, word_num
 
 
@@ -26,12 +27,12 @@ class Network(Model):
         self.maxlen = maxlen
         inp = Input(shape=(self.maxlen,))
         if embedding_matrix is not None:
-            model = Embedding(word_num, 100, weights=[embedding_matrix], input_length=self.maxlen, trainable=False)(inp)
+            net = Embedding(word_num, 100, weights=[embedding_matrix], input_length=self.maxlen, trainable=False)(inp)
         else:
-            model = Embedding(word_num, 100, input_length=self.maxlen, trainable=False)(inp)
-        model = Bidirectional(LSTM(100, return_sequences=True, dropout=0.50), merge_mode='concat')(model)
-        model = TimeDistributed(Dense(100, activation='relu'))(model)
-        model = Flatten()(model)
-        model = Dense(100, activation='relu')(model)
-        output = Dense(1, activation='sigmoid')(model)
+            net = Embedding(word_num, 100, input_length=self.maxlen, trainable=False)(inp)
+        net = Bidirectional(LSTM(100, return_sequences=True, dropout=0.50), merge_mode='concat')(net)
+        net = TimeDistributed(Dense(100, activation='relu'))(net)
+        net = Flatten()(net)
+        net = Dense(100, activation='relu')(net)
+        output = Dense(1, activation='sigmoid')(net)
         super().__init__(inp, output)

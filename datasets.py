@@ -36,14 +36,15 @@ class Datasets:
         sents = np.concatenate(datasets_sents)
         is_intent = np.concatenate(datasets_is_intent)
         dual = np.stack((sents, is_intent), axis=1)
-        print(dual.shape)
+        # print(dual.shape)
         # print(dual)
+        np.random.seed(42)
         dual = np.random.permutation(dual)
         sents = dual[:, 0]
         is_intent = dual[:, 1]
-        print(sents)
-        print(np.count_nonzero(is_intent), len(is_intent) - np.count_nonzero(is_intent))
-        print(is_intent)
+        # print(sents)
+        # print(np.count_nonzero(is_intent), len(is_intent) - np.count_nonzero(is_intent))
+        # print(is_intent)
         return sents, is_intent
 
     def get_tokenized_data(self, max_sentence_len):
@@ -58,7 +59,10 @@ class Datasets:
     def get_netio(self, is_intent, token_list, max_sentence_len, tokenizer):
         le = preprocessing.LabelEncoder()
         Y = is_intent
+        # print(Y)
         Y = le.fit_transform(Y)
+        # print(Y)
+        # exit(0)
 
         encoded_text = tokenizer.texts_to_sequences(token_list)
         X = pad_sequences(encoded_text, maxlen=max_sentence_len, padding='post')

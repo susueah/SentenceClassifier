@@ -20,13 +20,16 @@ def parse_args():
     parser.add_argument('--text', dest='text_path',
                         help='text to run on',
                         type=str)
+    parser.add_argument('--out_json', dest='json_path',
+                        help='result json',
+                        type=str)
     args = parser.parse_args()
 
     return args
 
 
-def run_on_input(filename, model, tknzr, maxlen):
-    with open(filename, 'r') as handle:
+def run_on_input(filename, model, tknzr, maxlen, json_path):
+    with open(filename, 'r', encoding='UTF-8') as handle:
         input = json.load(handle)
     output = []
     for text in input:
@@ -39,8 +42,8 @@ def run_on_input(filename, model, tknzr, maxlen):
             if is_intent:
                 proc_text['intents'].append({'text': sentence, 'startsAt': start})
         output.append(proc_text)
-    with open('out.json', 'w') as handle:
-        json.dump(output, handle)
+    with open(json_path, 'w', encoding='UTF-8') as handle:
+        json.dump(output, handle, indent=4)
 
 
 def run_single_sentence(sentence, model, tknzr, maxlen):
@@ -48,7 +51,7 @@ def run_single_sentence(sentence, model, tknzr, maxlen):
     encoded_text = tknzr.texts_to_sequences(token_list)
     X = pad_sequences(encoded_text, maxlen=maxlen, padding='post')
     Y = model.predict(X)
-    print(Y)
+    # print(Y)
     return Y[0][0] >= detect_thresh
 
 
@@ -65,4 +68,4 @@ def load_model_and_tokenizer(weights_path, maxlen):
 if __name__ == '__main__':
     args = parse_args()
     model, tknzr = load_model_and_tokenizer(args.weights, max_sentence_len)
-    run_on_input(args.text_path, model, tknzr, max_sentence_len)
+    run_on_input(args.text_path, model, tknzr, max_sentence_len, args.json_path)

@@ -1,15 +1,14 @@
 import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import PunktSentenceTokenizer
+from nltk.tokenize import TweetTokenizer
+from nltk.corpus import wordnet as wn
 
 nltk.download('wordnet')
 nltk.download('stopwords')
 stopwords = set(stopwords.words('english'))
 
-from nltk.tokenize import TweetTokenizer
-from nltk.corpus import wordnet as wn
-
-tknzr = TweetTokenizer()
+tweet_tokenizer = TweetTokenizer()
 
 
 def get_sentences(text):
@@ -19,16 +18,11 @@ def get_sentences(text):
 
 
 def get_tokens(sentence):
-    #     tokens = nltk.word_tokenize(sentence)  # now using tweet tokenizer
-    tokens = tknzr.tokenize(sentence)
-    tokens = [token for token in tokens if (token not in stopwords and len(token) > 1)]
-    tokens = [get_lemma(token) for token in tokens]
+    tokens = tweet_tokenizer.tokenize(sentence)
+    tokens = [get_word(token) for token in tokens if (token not in stopwords and len(token) > 1)]
     return tokens
 
 
-def get_lemma(word):
+def get_word(word):
     lemma = wn.morphy(word)
-    if lemma is None:
-        return word
-    else:
-        return lemma
+    return word if (lemma is None) else lemma

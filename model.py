@@ -12,7 +12,6 @@ from keras.layers.embeddings import Embedding
 def make_embedding(tokenizer, word2vec):
     word_num = len(tokenizer.word_index) + 1
     embedding_matrix = np.zeros((word_num, 100))
-
     for word, i in tokenizer.word_index.items():
         embedding_vector = word2vec.get(word)
         if embedding_vector is not None:

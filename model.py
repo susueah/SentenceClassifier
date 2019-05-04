@@ -9,11 +9,11 @@ from keras.models import Model
 from keras.layers.embeddings import Embedding
 
 
-def make_embedding(tokenizer, word2vec):
+def make_embedding(tokenizer, embed_dict):
     word_num = len(tokenizer.word_index) + 1
     embedding_matrix = np.zeros((word_num, 100))
     for word, i in tokenizer.word_index.items():
-        embedding_vector = word2vec.get(word)
+        embedding_vector = embed_dict.get(word)
         if embedding_vector is not None:
             embedding_matrix[i] = embedding_vector
         else:

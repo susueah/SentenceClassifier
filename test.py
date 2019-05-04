@@ -10,6 +10,7 @@ from model import Network
 max_sentence_len = 50
 detect_thresh = 0.5
 
+
 def parse_args():
     """Parse input arguments."""
     parser = argparse.ArgumentParser(description='LSTM for sentence binary classification')
@@ -31,15 +32,16 @@ def run_on_input(filename, model, tknzr, maxlen):
     for text in input:
         id = text['id']
         str = text['text']
-        proc_text = {'id':id, 'intents': []}
+        proc_text = {'id': id, 'intents': []}
         sentences_starts = get_sentences(str)
         for sentence, start in sentences_starts:
             is_intent = run_single_sentence(sentence, model, tknzr, maxlen)
             if is_intent:
-                proc_text['intents'].append({'text':sentence, 'startsAt': start})
+                proc_text['intents'].append({'text': sentence, 'startsAt': start})
         output.append(proc_text)
     with open('out.json', 'w') as handle:
         json.dump(output, handle)
+
 
 def run_single_sentence(sentence, model, tknzr, maxlen):
     token_list = [get_tokens(sentence)]
@@ -49,6 +51,7 @@ def run_single_sentence(sentence, model, tknzr, maxlen):
     print(Y)
     return Y[0][0] >= detect_thresh
 
+
 def load_model_and_tokenizer(weights_path, maxlen):
     with open('tokenizer.pickle', 'rb') as handle:
         tokenizer = pickle.load(handle)
@@ -57,6 +60,7 @@ def load_model_and_tokenizer(weights_path, maxlen):
     model.load_weights(weights_path)
     model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
     return model, tokenizer
+
 
 if __name__ == '__main__':
     args = parse_args()

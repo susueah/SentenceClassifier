@@ -10,6 +10,14 @@ from keras_preprocessing.sequence import pad_sequences
 from sklearn import preprocessing
 
 
+def prepare_ask0729(file_path):
+    csv = pandas.read_csv(file_path, '\t')
+    # csv = csv.sample(frac=1)
+    sents = csv['sentence'].values
+    is_intent = [is_in == 'Yes' for is_in in csv['is_intent']]
+    return sents, is_intent
+
+
 class Datasets:
     def __init__(self, data_dir):
         self.dataset1_path = os.path.join(data_dir, "Ask0729-fixed.txt")
@@ -19,7 +27,7 @@ class Datasets:
     def get_data(self):
         datasets_sents = []
         datasets_is_intent = []
-        dataset1_sents, dataset1_is_intent = self.prepare_ask0729(self.dataset1_path)
+        dataset1_sents, dataset1_is_intent = prepare_ask0729(self.dataset1_path)
         datasets_sents.append(dataset1_sents)
         datasets_is_intent.append(dataset1_is_intent)
         dataset2_sents, dataset2_is_intent = self.prepare_positive_intents(self.dataset2_path)
@@ -56,12 +64,6 @@ class Datasets:
         X = pad_sequences(encoded_text, maxlen=max_sentence_len, padding='post')
         return X, Y
 
-    def prepare_ask0729(self, file_path):
-        csv = pandas.read_csv(file_path, '\t')
-        # csv = csv.sample(frac=1)
-        sents = csv['sentence'].values
-        is_intent = [is_in == 'Yes' for is_in in csv['is_intent']]
-        return sents, is_intent
     def prepare_positive_intents(self, file_path):
         csv = pandas.read_csv(file_path, ',', encoding='UTF-8')
         # csv = csv.sample(frac=1)
